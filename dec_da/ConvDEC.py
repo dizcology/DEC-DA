@@ -6,10 +6,23 @@ Author:
     Xifeng Guo. 2018.6.30
 """
 
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer, Layer
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from FcDEC import FcDEC, ClusteringLayer
+
+
+class L2Normalize(Layer):
+    def __init__(self, axis=-1, radius=8.0, name=None):
+        super(L2Normalize, self).__init__(name=name)
+        self.axis = axis
+        self.radius = radius
+
+    def build(self, input_shape):
+        pass
+
+    def call(self, input):
+        return self.radius * tf.nn.l2_normalize(input, axis=self.axis)
 
 
 def CAE(input_shape=(28, 28, 1), filters=[32, 64, 128, 10]):
@@ -27,7 +40,8 @@ def CAE(input_shape=(28, 28, 1), filters=[32, 64, 128, 10]):
     model.add(Conv2D(filters[2], 3, strides=2, padding=pad3, activation='relu', name='conv3'))
 
     model.add(Flatten())
-    model.add(Dense(units=filters[3], name='embedding'))
+    model.add(Dense(units=filters[3]))
+    model.add(L2Normalize(), name='embedding')
     model.add(Dense(units=filters[2]*int(input_shape[0]/8)*int(input_shape[0]/8), activation='relu'))
 
     model.add(Reshape((int(input_shape[0]/8), int(input_shape[0]/8), filters[2])))
