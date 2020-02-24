@@ -41,7 +41,7 @@ def CAE(input_shape=(28, 28, 1), filters=[32, 64, 128, 10]):
 
     model.add(Flatten())
     model.add(Dense(units=filters[3]))
-    model.add(L2Normalize(), name='embedding')
+    model.add(L2Normalize(name='embedding'))
     model.add(Dense(units=filters[2]*int(input_shape[0]/8)*int(input_shape[0]/8), activation='relu'))
 
     model.add(Reshape((int(input_shape[0]/8), int(input_shape[0]/8), filters[2])))
