@@ -6,13 +6,15 @@ Author:
     Xifeng Guo. 2018.6.30
 """
 
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer, Layer
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from FcDEC import FcDEC, ClusteringLayer
 
+import tensorflow as tf
 
-class L2Normalize(Layer):
+
+class L2Normalize(tf.keras.layers.Layer):
     def __init__(self, axis=-1, radius=8.0, name=None):
         super(L2Normalize, self).__init__(name=name)
         self.axis = axis
