@@ -12,7 +12,7 @@ from FcDEC import FcDEC
 
 
 class FcIDEC(FcDEC):
-    def __init__(self, dims, n_clusters=10, alpha=1.0):
+    def __init__(self, dims, n_clusters=10, alpha=100.0):
         super(FcIDEC, self).__init__(dims, n_clusters, alpha)
         self.model = Model(inputs=self.autoencoder.input,
                            outputs=[self.model.output, self.autoencoder.output])

@@ -74,7 +74,7 @@ class ClusteringLayer(Layer):
         2D tensor with shape: `(n_samples, n_clusters)`.
     """
 
-    def __init__(self, n_clusters, weights=None, alpha=1.0, **kwargs):
+    def __init__(self, n_clusters, weights=None, alpha=100.0, **kwargs):
         if 'input_shape' not in kwargs and 'input_dim' in kwargs:
             kwargs['input_shape'] = (kwargs.pop('input_dim'),)
         super(ClusteringLayer, self).__init__(**kwargs)
