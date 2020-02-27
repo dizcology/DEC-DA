@@ -120,7 +120,7 @@ class FcDEC(object):
     def __init__(self,
                  dims,
                  n_clusters=10,
-                 alpha=1.0):
+                 alpha=100.0):
 
         super(FcDEC, self).__init__()
 
