@@ -9,7 +9,7 @@ Author:
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from FcDEC import FcDEC, ClusteringLayer
+from dec_da.FcDEC import FcDEC, ClusteringLayer
 
 import tensorflow as tf
 

@@ -8,7 +8,7 @@ Author:
 """
 
 from tensorflow.keras.models import Model
-from ConvDEC import ConvDEC
+from dec_da.ConvDEC import ConvDEC
 
 
 class ConvIDEC(ConvDEC):
