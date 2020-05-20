@@ -37,7 +37,7 @@ def CAE(input_shape=(28, 28, 1), filters=[32, 64, 128, 10]):
     model.add(InputLayer(input_shape))
     model.add(Conv2D(filters[0], 5, strides=2, padding='same', activation='relu', name='conv1'))
 
-    model.add(Conv2D(filters[1], 5, strides=2, padding='same', activation='relu', name='conv2'))
+    model.add(Conv2D(filters[1], 4, strides=2, padding='same', activation='relu', name='conv2'))
 
     model.add(Conv2D(filters[2], 3, strides=2, padding=pad3, activation='relu', name='conv3'))
 
