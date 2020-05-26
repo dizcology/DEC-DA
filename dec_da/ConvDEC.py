@@ -66,7 +66,8 @@ def CAE(input_shape=(28, 28, 1), filters=[32, 64, 128, 10]):
     if dh > 0 or dw > 0:
         model.add(Cropping2D(cropping=padding))
 
-    assert model.output_shape[1:] == input_shape
+    assert model.output_shape[1] == input_shape[0], (model_output_shape, input_shape)
+    assert model.output_shape[2] == input_shape[1], (model_output_shape, input_shape)
     
     encoder = Model(inputs=model.input, outputs=model.get_layer('embedding').output)
     return model, encoder
