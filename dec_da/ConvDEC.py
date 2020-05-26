@@ -6,7 +6,7 @@ Author:
     Xifeng Guo. 2018.6.30
 """
 
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dense, Flatten, Reshape, InputLayer, ZeroPadding2D, Cropping2D
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from dec_da.FcDEC import FcDEC, ClusteringLayer
@@ -29,29 +29,45 @@ class L2Normalize(tf.keras.layers.Layer):
 
 def CAE(input_shape=(28, 28, 1), filters=[32, 64, 128, 10]):
     model = Sequential()
-    if input_shape[0] % 8 == 0:
-        pad3 = 'same'
-    else:
-        pad3 = 'valid'
 
     model.add(InputLayer(input_shape))
+    
+    # pad to multiple of 8
+    dh = dw = 0
+    if input_shape[0] % 8 != 8:
+        dh = 8 - (input_shape[0] % 8)
+        
+    if input_shape[1] % 8 != 8:
+        dw = 8 - (input_shape[1] % 8)
+        
+    if dh > 0 or dw > 0:
+        padding = ((dh // 2, (dh // 2) + (dh % 2)), (dw // 2, (dw // 2) + (dw % 2)))
+        model.add(ZeroPadding2D(padding=padding))
+    
     model.add(Conv2D(filters[0], 5, strides=2, padding='same', activation='relu', name='conv1'))
 
     model.add(Conv2D(filters[1], 5, strides=2, padding='same', activation='relu', name='conv2'))
 
-    model.add(Conv2D(filters[2], 3, strides=2, padding=pad3, activation='relu', name='conv3'))
+    model.add(Conv2D(filters[2], 3, strides=2, padding='same', activation='relu', name='conv3'))
 
     model.add(Flatten())
     model.add(Dense(units=filters[3]))
     model.add(L2Normalize(name='embedding'))
-    model.add(Dense(units=filters[2]*int(input_shape[0]/8)*int(input_shape[0]/8), activation='relu'))
+    model.add(Dense(units=filters[2]*int((input_shape[0]+dh)/8)*int((input_shape[0]+dw)/8), activation='relu'))
 
-    model.add(Reshape((int(input_shape[0]/8), int(input_shape[0]/8), filters[2])))
-    model.add(Conv2DTranspose(filters[1], 3, strides=2, padding=pad3, activation='relu', name='deconv3'))
+    model.add(Reshape((int((input_shape[0]+dh)/8), int((input_shape[0]+dw)/8), filters[2])))
+    model.add(Conv2DTranspose(filters[1], 3, strides=2, padding='same', activation='relu', name='deconv3'))
 
     model.add(Conv2DTranspose(filters[0], 5, strides=2, padding='same', activation='relu', name='deconv2'))
 
     model.add(Conv2DTranspose(input_shape[2], 5, strides=2, padding='same', name='deconv1'))
+    
+    # center crop if needed
+    if dh > 0 or dw > 0:
+        model.add(Cropping2D(cropping=padding))
+
+    assert model.output_shape[1:] == input_shape
+    
     encoder = Model(inputs=model.input, outputs=model.get_layer('embedding').output)
     return model, encoder
 
